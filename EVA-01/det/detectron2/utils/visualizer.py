@@ -139,7 +139,7 @@ class GenericMask:
         rle = mask_util.frPyObjects(polygons, self.height, self.width)
         rle = mask_util.merge(rle)
         return mask_util.decode(rle)[:, :]
-
+    
     def area(self):
         return self.mask.sum()
 
@@ -379,6 +379,42 @@ class Visualizer:
         )
         self._instance_mode = instance_mode
         self.keypoint_threshold = _KEYPOINT_THRESHOLD
+
+    def parse_output(self, predictions):
+        """
+        """
+        boxes = predictions.pred_boxes if predictions.has("pred_boxes") else None
+        scores = predictions.scores if predictions.has("scores") else None
+        classes = predictions.pred_classes.tolist() if predictions.has("pred_classes") else None
+        labels = _create_text_labels(classes, scores, self.metadata.get("thing_classes", None))
+        keypoints = predictions.pred_keypoints if predictions.has("pred_keypoints") else None
+
+        if predictions.has("pred_masks"):
+            masks = np.asarray(predictions.pred_masks)
+            rle_masks = self.encode_mask_results(masks)
+            masks = [GenericMask(x, self.output.height, self.output.width) for x in masks]
+        else:
+            masks = None
+
+        return [boxes, scores, classes, labels, masks, rle_masks]
+    
+    def encode_mask_results(self, mask_results):
+        """Encode bitmap mask to RLE code.
+
+        Args:
+            mask_results (list): bitmap mask results.
+
+        Returns:
+            list | tuple: RLE encoded mask.
+        """
+        encoded_mask_results = []
+        for mask in mask_results:
+            encoded_mask_results.append(
+                mask_util.encode(
+                    np.array(mask[:, :, np.newaxis], order='F',
+                            dtype='uint8'))[0])  # encoded with RLE
+        return encoded_mask_results
+
 
     def draw_instance_predictions(self, predictions):
         """
