@@ -46,7 +46,7 @@ def main(args):
         down_res = requests.get(url=down_url)
 
         frame_id, _ = os.path.splitext(os.path.basename(img_fpn))
-        with open(os.path.join(args.output_dir, f'{frame_id}.csv'), "wb") as f:
+        with open(os.path.join(args.output_dir, f'{frame_id}.json'), "wb") as f:
             f.write(down_res.content)
 
 
