@@ -240,7 +240,7 @@ def infer_web(model, cfg, logger, args):
         title="EVA detection Demo",
         examples=[["./serv/000154.jpg"]]
     )
-    demo.launch(server_name="0.0.0.0", server_port=8010, show_api=True, show_tips=True)
+    demo.launch(server_name="0.0.0.0", server_port=8107, show_api=True, show_tips=True)
 
 
 if __name__ == "__main__":
