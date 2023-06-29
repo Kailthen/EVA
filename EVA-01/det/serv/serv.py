@@ -120,11 +120,15 @@ def convert_to_json(inputs, output_fpn, outputs, header=['frame_id', 'track_id',
             row_dict[k] = v
         rows.append(row_dict)
 
+    result = {
+        "objects":rows
+    }
+
     # with open(output_fpn, 'w') as f:
     #     writer = csv.writer(f, delimiter=",")
     #     writer.writerow(header)
     #     writer.writerows(rows)
-    save_to_json(output_fpn, rows)
+    save_to_json(output_fpn, result)
 
     return output_fpn
 
